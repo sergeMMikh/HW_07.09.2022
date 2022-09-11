@@ -88,12 +88,15 @@ def test_filter_by_name_4_courses(client, courses_factory):
 
 @pytest.mark.django_db
 def test_course_creation(client):
+
+    count = Course.objects.count()
+
     Student.objects.create(
         id=1,
         name='Yorik',
         birth_date='2000-01-01'
     )
-    count = Course.objects.count()
+
     response = client.post('/courses/',
                            data={
                                "name": "Latin",
@@ -102,3 +105,50 @@ def test_course_creation(client):
 
     assert response.status_code == 201
     assert Course.objects.count() == count + 1
+
+
+@pytest.mark.django_db
+def test_course_update(client, courses_factory):
+    """
+    Проверка фильтрации списка курсов по id
+    """
+
+    message = courses_factory(_quantity=10)
+    Student.objects.create(
+        id=1,
+        name='Yorik',
+        birth_date='2000-01-01'
+    )
+
+    count = Course.objects.count()
+
+    url = '/courses/' + str(message[5].id) + '/'
+
+    response = client.patch(url,
+                            data={
+                                "name": "Latin",
+                                "students": [1]
+                            })
+    data = response.json()
+
+    assert response.status_code == 200
+    assert Course.objects.count() == count
+    assert data['name'] == "Latin"
+
+
+@pytest.mark.django_db
+def test_course_delete(client, courses_factory):
+    """
+    Проверка фильтрации списка курсов по id
+    """
+    count = Course.objects.count()
+
+    message = courses_factory(_quantity=10)
+
+    url = '/courses/' + str(message[5].id) + '/'
+
+    response = client.delete(url)
+    # data = response.json()
+
+    assert response.status_code == 204
+    assert Course.objects.count() == count + 9
