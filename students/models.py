@@ -1,5 +1,5 @@
 from django.db import models
-
+from model_bakery import baker
 
 class Student(models.Model):
 

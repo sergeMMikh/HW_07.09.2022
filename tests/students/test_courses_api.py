@@ -73,7 +73,7 @@ def test_filter_by_id_4_courses(client, courses_factory):
 @pytest.mark.django_db
 def test_filter_by_name_4_courses(client, courses_factory):
     """
-    Проверка фильтрации списка курсов по id
+    Проверка фильтрации списка курсов по name
     """
     message = courses_factory(_quantity=10)
 
@@ -88,6 +88,9 @@ def test_filter_by_name_4_courses(client, courses_factory):
 
 @pytest.mark.django_db
 def test_course_creation(client):
+    """
+    Проверка успешного создания курса
+    """
 
     count = Course.objects.count()
 
@@ -110,7 +113,7 @@ def test_course_creation(client):
 @pytest.mark.django_db
 def test_course_update(client, courses_factory):
     """
-    Проверка фильтрации списка курсов по id
+    Проверка успешного обновления курса
     """
 
     message = courses_factory(_quantity=10)
@@ -139,7 +142,7 @@ def test_course_update(client, courses_factory):
 @pytest.mark.django_db
 def test_course_delete(client, courses_factory):
     """
-    Проверка фильтрации списка курсов по id
+    Проверка успешного удаления курса
     """
     count = Course.objects.count()
 
