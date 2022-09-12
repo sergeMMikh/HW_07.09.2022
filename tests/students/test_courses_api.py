@@ -12,7 +12,6 @@ def client():
 
 @pytest.fixture
 def courses_factory():
-    # создаем курс через фабрику
     def factory(*args, **kwargs):
         return baker.make(Course, *args, **kwargs)
 
@@ -60,10 +59,7 @@ def test_filter_by_id_4_courses(client, courses_factory):
     Проверка фильтрации списка курсов по id
     """
     message = courses_factory(_quantity=10)
-
-    url = '/courses/?id=' + str(message[5].id)
-
-    response = client.get(url)
+    response = client.get(f'/courses/?id={message[5].id}')
     data = response.json()
 
     assert response.status_code == 200
@@ -77,9 +73,7 @@ def test_filter_by_name_4_courses(client, courses_factory):
     """
     message = courses_factory(_quantity=10)
 
-    url = '/courses/?name=' + str(message[5].name)
-
-    response = client.get(url)
+    response = client.get(f'/courses/?name={message[5].name}')
     data = response.json()
 
     assert response.status_code == 200
