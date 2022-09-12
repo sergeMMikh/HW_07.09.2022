@@ -27,14 +27,14 @@ def test_api(client):
 @pytest.mark.django_db
 def test_get_course(client, courses_factory):
     """
-    Проверка получения 1го курса (retrieve-логика)
+    Проверка получения одного курса (retrieve-логика)
     """
     message = courses_factory(_quantity=1)
-    response = client.get('/courses/')
+    response = client.get(f'/courses/{str(message[0].id)}/')
     data = response.json()
 
     assert response.status_code == 200
-    assert data[0]['name'] == message[0].name
+    assert data.get('name') == message[0].name
 
 
 @pytest.mark.django_db
@@ -59,7 +59,9 @@ def test_filter_by_id_4_courses(client, courses_factory):
     Проверка фильтрации списка курсов по id
     """
     message = courses_factory(_quantity=10)
-    response = client.get(f'/courses/?id={message[5].id}')
+    response = client.get('/courses/?',
+                          {'id': message[5].id})
+
     data = response.json()
 
     assert response.status_code == 200
@@ -119,9 +121,7 @@ def test_course_update(client, courses_factory):
 
     count = Course.objects.count()
 
-    url = '/courses/' + str(message[5].id) + '/'
-
-    response = client.patch(url,
+    response = client.patch(f'/courses/{message[5].id}/',
                             data={
                                 "name": "Latin",
                                 "students": [1]
@@ -139,13 +139,9 @@ def test_course_delete(client, courses_factory):
     Проверка успешного удаления курса
     """
     count = Course.objects.count()
-
     message = courses_factory(_quantity=10)
 
-    url = '/courses/' + str(message[5].id) + '/'
-
-    response = client.delete(url)
-    # data = response.json()
+    response = client.delete(f'/courses/{message[5].id}/')
 
     assert response.status_code == 204
     assert Course.objects.count() == count + 9
